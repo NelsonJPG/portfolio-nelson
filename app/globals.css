@@ -269,3 +269,12 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
   .js .rise.pre{opacity:1;transform:none}
 }
+
+/* project videos share the image rules */
+.pcard .cover video{width:100%;height:100%;object-fit:cover;display:block}
+.gal-main video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.gal-main:has(video) .gal-nav{bottom:56px}
+.gal-main:has(video) .gal-count{display:none}
+.thumbs button{position:relative}
+.thumbs video{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs .is-video::after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;font-size:14px;color:#fff;background:rgba(0,0,0,.35)}

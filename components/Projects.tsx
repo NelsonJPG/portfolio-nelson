@@ -1,9 +1,31 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Project } from "@/content/projects";
+import type { Media } from "@/lib/media";
 import Chips from "./Chips";
 
-type Item = Project & { imgs: string[] };
+type Item = Project & { media: Media[]; placeholder: boolean };
+
+// One gallery item. Videos play muted and looped; `controls` adds the player bar.
+function MediaView({ m, alt, controls, lazy }: { m: Media; alt: string; controls?: boolean; lazy?: boolean }) {
+  if (m.kind === "video")
+    return (
+      <video
+        key={m.src}
+        src={m.src}
+        poster={m.poster}
+        aria-label={m.alt ?? alt}
+        muted
+        loop
+        playsInline
+        autoPlay={!reduced()}
+        controls={controls}
+        preload={lazy ? "metadata" : "auto"}
+      />
+    );
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img src={m.src} alt={m.alt ?? alt} loading={lazy ? "lazy" : undefined} draggable={false} />;
+}
 
 const reduced = () => typeof window !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -147,8 +169,7 @@ export default function Projects({ projects }: { projects: Item[] }) {
               onClick={(e) => openProject(p.id, e.currentTarget)}
             >
               <div className="cover">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.imgs[0]} alt="" loading="lazy" draggable={false} />
+                <MediaView m={p.media.find((m) => m.kind === "image") ?? p.media[0]} alt="" lazy />
               </div>
               <div className="body">
                 <div className="meta"><span>{p.org}</span><span>{p.years}</span></div>
@@ -197,7 +218,7 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
     }
   }, [shown, project]);
 
-  const n = shown?.imgs.length ?? 1;
+  const n = shown?.media.length ?? 1;
   const go = useCallback((i: number) => setImg(((i % n) + n) % n), [n]);
 
   useEffect(() => {
@@ -257,8 +278,7 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
           </div>
           <div className="gal">
             <div className="gal-main">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={p.imgs[img]} alt={`${p.title} screenshot ${img + 1}`} />
+              <MediaView m={p.media[img]} alt={`${p.title} screenshot ${img + 1}`} controls />
               <span className="gal-count">{img + 1} / {n}</span>
               <div className="gal-nav">
                 <button className="icon-btn" aria-label="Previous image" onClick={() => go(img - 1)}>←</button>
@@ -266,10 +286,21 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
               </div>
             </div>
             <div className="thumbs">
-              {p.imgs.map((s, i) => (
-                <button type="button" key={i} aria-label={`Show image ${i + 1}`} aria-current={i === img} onClick={() => go(i)}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s} alt="" />
+              {p.media.map((m, i) => (
+                <button
+                  type="button"
+                  key={i}
+                  className={m.kind === "video" ? "is-video" : undefined}
+                  aria-label={`Show ${m.kind} ${i + 1}`}
+                  aria-current={i === img}
+                  onClick={() => go(i)}
+                >
+                  {m.kind === "video" && !m.poster ? (
+                    <video src={m.src} muted playsInline preload="metadata" />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={m.poster ?? m.src} alt="" />
+                  )}
                 </button>
               ))}
             </div>
@@ -290,7 +321,7 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
               </div>
             </div>
           ) : null}
-          {p.shots.some((s) => typeof s !== "string") && (
+          {p.placeholder && (
             <p className="note">Screenshots are placeholders until real ones are added.</p>
           )}
         </div>

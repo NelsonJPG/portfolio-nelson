@@ -8,14 +8,11 @@ import Footer from "@/components/Footer";
 import StatusBar from "@/components/StatusBar";
 import ScrollFx from "@/components/ScrollFx";
 import { projects } from "@/content/projects";
-import { mock } from "@/lib/mock";
+import { resolveMedia } from "@/lib/media";
 
 export default function Home() {
-  // Resolve placeholder screenshots at build time so the client gets plain image URLs.
-  const items = projects.map((p) => ({
-    ...p,
-    imgs: p.shots.map((s) => (typeof s === "string" ? s : mock(s[0], s[1]))),
-  }));
+  // Resolve each gallery at build time (folder files, listed files or placeholders).
+  const items = projects.map((p) => ({ ...p, ...resolveMedia(p) }));
 
   return (
     <>

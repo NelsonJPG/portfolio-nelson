@@ -21,13 +21,11 @@ All text lives in `content/`, so most changes never touch a component:
 | `content/projects.ts` | Carousel cards and drawer content |
 | `content/skills.ts` | Technical and soft skills, languages |
 
-### Add real project screenshots
+### Add project images and videos
 
-1. Put the images in `public/projects/` (for example `public/projects/dubsado-1.png`, 1600×1000 works well).
-2. In `content/projects.ts`, replace a placeholder like `["workflow", "app.dubsado.com/workflows"]` with `"/projects/dubsado-1.png"`.
-3. Optional: add `links: [{ label: "Live site", href: "https://..." }]` to show buttons in the drawer.
+Drop files into `public/projects/<project-id>/` (one folder per project, already created) and name them `01-...`, `02-...` in the order you want. Videos (`.mp4`, `.webm`) play in the project drawer. Full guide: [`public/projects/README.md`](public/projects/README.md).
 
-The "Screenshots are placeholders" note disappears once a project has only real images.
+Optional: add `links: [{ label: "Live site", href: "https://..." }]` to a project in `content/projects.ts` to show buttons in the drawer.
 
 ### Other files
 

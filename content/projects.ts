@@ -1,8 +1,12 @@
 import type { MockKind } from "@/lib/mock";
 
-// Each screenshot is either a real image in /public (e.g. "/projects/dubsado-1.png")
-// or a placeholder: [kind, address-bar label]. Swap placeholders for real files when you have them.
-export type Shot = string | [MockKind, string];
+// Images and videos: drop files into public/projects/<id>/ (e.g. public/projects/dubsado/).
+// They show up automatically, sorted by file name, so prefix them 01-, 02-, ...
+// The `shots` below are generated placeholders, used only while that folder is empty.
+// To pick files or add captions by hand, list them here instead and they win over the folder:
+//   "/projects/dubsado/01-editor.png"
+//   { src: "/projects/dubsado/demo.mp4", poster: "/projects/dubsado/demo.jpg", alt: "Editing a workflow" }
+export type Shot = string | { src: string; poster?: string; alt?: string } | [MockKind, string];
 
 export type Project = {
   id: string;
