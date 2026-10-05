@@ -75,7 +75,7 @@ export const projects: Project[] = [
     shots: [["dashboard", "portal.sistran.com"], ["map", "portal.sistran.com/providers"], ["form", "agents.sistran.com/quote"]],
   },
   {
-    id: "atmosera-ds", title: "Atmosera design system", tag: "Base theme and components", years: "2025 – 2026", role: "Fullstack developer", org: "Atmosera",
+    id: "atmosera-ds", title: "Hope Medical", tag: "Base theme and components", years: "2025 – 2026", role: "Fullstack developer", org: "Atmosera",
     summary: "The base theme and design system the whole team builds on.",
     context: "A new product needed consistent UI foundations fast, while features were being delivered with AI-assisted, spec-driven workflows.",
     built: [
@@ -85,17 +85,5 @@ export const projects: Project[] = [
     ],
     stack: ["React", "TypeScript", "Ant Design", "Tailwind CSS", "Playwright", "Claude Code"],
     shots: [["components", "design-system / foundations"], ["dashboard", "app / module"], ["form", "app / settings"]],
-  },
-  {
-    id: "rootech-payments", title: "Payments app", tag: "Architecture and component library", years: "2018 – 2020", role: "Fullstack developer", org: "RooTech Services",
-    summary: "Front-end architecture and a shared React component library for a payments product.",
-    context: "Several projects repeated the same UI code. The payments app needed a clear structure the whole team could follow.",
-    built: [
-      "Designed the front-end architecture, coding standards and project structure.",
-      "A reusable React component library that cut duplication across projects.",
-      "Database models, relationships and API design.",
-    ],
-    stack: ["React", "Node.js", "REST APIs"],
-    shots: [["dashboard", "pay.rootech / overview"], ["components", "ui-kit / components"], ["form", "pay.rootech / transfer"]],
   },
 ];

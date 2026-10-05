@@ -4,6 +4,7 @@ import { profile } from "@/content/profile";
 export const tabs = [
   { href: "#about", label: "about.md", ln: 12 },
   { href: "#experience", label: "experience.ts", ln: 48 },
+  { href: "#education", label: "education.ts", ln: 72 },
   { href: "#projects", label: "projects/", ln: 96 },
   { href: "#skills", label: "skills.md", ln: 140 },
 ];

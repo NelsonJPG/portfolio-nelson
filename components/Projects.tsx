@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Project } from "@/content/projects";
 import type { Media } from "@/lib/media";
+import { useDragScroll } from "@/lib/useDragScroll";
 import Chips from "./Chips";
 
 type Item = Project & { media: Media[]; placeholder: boolean };
@@ -195,7 +196,34 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
   const [img, setImg] = useState(0);
   const drawer = useRef<HTMLElement>(null);
   const body = useRef<HTMLDivElement>(null);
+  const info = useRef<HTMLDivElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
+  const thumbs = useRef<HTMLDivElement>(null);
+  const thumbProg = useRef<HTMLElement>(null);
+  const thumbsDragged = useDragScroll(thumbs);
+
+  // Progress-bar fill only; navigation stays on the single prev/next control over the main image.
+  const syncThumbs = useCallback(() => {
+    const t = thumbs.current;
+    if (!t || !thumbProg.current) return;
+    const max = t.scrollWidth - t.clientWidth;
+    const f = max > 0 ? t.scrollLeft / max : 0;
+    const vis = t.clientWidth / t.scrollWidth;
+    thumbProg.current.style.width = vis * 100 + "%";
+    thumbProg.current.style.marginLeft = f * (1 - vis) * 100 + "%";
+  }, []);
+
+  useEffect(() => {
+    const t = thumbs.current;
+    if (!t || !shown) return;
+    syncThumbs();
+    t.addEventListener("scroll", syncThumbs, { passive: true });
+    addEventListener("resize", syncThumbs);
+    return () => {
+      t.removeEventListener("scroll", syncThumbs);
+      removeEventListener("resize", syncThumbs);
+    };
+  }, [shown, syncThumbs]);
 
   useEffect(() => {
     if (project) {
@@ -214,12 +242,22 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
   useEffect(() => {
     if (shown && project) {
       if (body.current) body.current.scrollTop = 0;
+      if (info.current) info.current.scrollTop = 0;
       closeBtn.current?.focus({ preventScroll: true });
     }
   }, [shown, project]);
 
   const n = shown?.media.length ?? 1;
   const go = useCallback((i: number) => setImg(((i % n) + n) % n), [n]);
+
+  // Keep the active thumbnail in view as the main image changes.
+  useEffect(() => {
+    const t = thumbs.current;
+    const btn = t?.children[img] as HTMLElement | undefined;
+    if (!t || !btn) return;
+    const left = btn.offsetLeft - (t.clientWidth - btn.clientWidth) / 2;
+    t.scrollTo({ left, behavior: reduced() ? "auto" : "smooth" });
+  }, [img]);
 
   useEffect(() => {
     if (!project) return;
@@ -267,63 +305,76 @@ function Drawer({ project, onClose }: { project: Item | null; onClose: () => voi
           <button className="icon-btn" ref={closeBtn} aria-label="Close project" onClick={onClose}>✕</button>
         </div>
         <div className="d-body" ref={body}>
-          <div>
-            <div className="file" style={{ marginBottom: 8 }}>{p.tag}</div>
-            <h2 id="d-title">{p.title}</h2>
-          </div>
-          <div className="d-kv">
-            <div><span>Role</span><b>{p.role}</b></div>
-            <div><span>Company</span><b>{p.org}</b></div>
-            <div><span>Years</span><b>{p.years}</b></div>
-          </div>
-          <div className="gal">
-            <div className="gal-main">
-              <MediaView m={p.media[img]} alt={`${p.title} screenshot ${img + 1}`} controls />
-              <span className="gal-count">{img + 1} / {n}</span>
-              <div className="gal-nav">
-                <button className="icon-btn" aria-label="Previous image" onClick={() => go(img - 1)}>←</button>
-                <button className="icon-btn" aria-label="Next image" onClick={() => go(img + 1)}>→</button>
-              </div>
-            </div>
-            <div className="thumbs">
-              {p.media.map((m, i) => (
-                <button
-                  type="button"
-                  key={i}
-                  className={m.kind === "video" ? "is-video" : undefined}
-                  aria-label={`Show ${m.kind} ${i + 1}`}
-                  aria-current={i === img}
-                  onClick={() => go(i)}
+          <div className="d-cols">
+            <div className="d-gallery">
+              <div className="gal">
+                <div className="gal-main">
+                  <MediaView m={p.media[img]} alt={`${p.title} screenshot ${img + 1}`} controls />
+                  <span className="gal-count">{img + 1} / {n}</span>
+                  <div className="gal-nav">
+                    <button className="icon-btn" aria-label="Previous image" onClick={() => go(img - 1)}>←</button>
+                    <button className="icon-btn" aria-label="Next image" onClick={() => go(img + 1)}>→</button>
+                  </div>
+                </div>
+                <div
+                  className="thumbs"
+                  ref={thumbs}
+                  onClickCapture={(e) => {
+                    if (thumbsDragged.current) { e.preventDefault(); e.stopPropagation(); thumbsDragged.current = false; }
+                  }}
                 >
-                  {m.kind === "video" && !m.poster ? (
-                    <video src={m.src} muted playsInline preload="metadata" />
-                  ) : (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={m.poster ?? m.src} alt="" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="d-sec"><h4>Context</h4><p>{p.context}</p></div>
-          <div className="d-sec">
-            <h4>What I built</h4>
-            <ul>{p.built.map((b) => <li key={b}>{b}</li>)}</ul>
-          </div>
-          <div className="d-sec"><h4>Stack</h4><Chips items={p.stack} /></div>
-          {p.links?.length ? (
-            <div className="d-sec">
-              <h4>Links</h4>
-              <div className="chips">
-                {p.links.map((l) => (
-                  <a key={l.href} className="btn sm" href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
-                ))}
+                  {p.media.map((m, i) => (
+                    <button
+                      type="button"
+                      key={i}
+                      className={m.kind === "video" ? "is-video" : undefined}
+                      aria-label={`Show ${m.kind} ${i + 1}`}
+                      aria-current={i === img}
+                      onClick={() => go(i)}
+                    >
+                      {m.kind === "video" && !m.poster ? (
+                        <video src={m.src} muted playsInline preload="metadata" />
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={m.poster ?? m.src} alt="" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <div className="progress" aria-hidden="true"><i ref={thumbProg} /></div>
               </div>
             </div>
-          ) : null}
-          {p.placeholder && (
-            <p className="note">Screenshots are placeholders until real ones are added.</p>
-          )}
+            <div className="d-info" ref={info}>
+              <div>
+                <div className="file" style={{ marginBottom: 8 }}>{p.tag}</div>
+                <h2 id="d-title">{p.title}</h2>
+              </div>
+              <div className="d-kv">
+                <div><span>Role</span><b>{p.role}</b></div>
+                <div><span>Company</span><b>{p.org}</b></div>
+                <div><span>Years</span><b>{p.years}</b></div>
+              </div>
+              <div className="d-sec"><h4>Context</h4><p>{p.context}</p></div>
+              <div className="d-sec">
+                <h4>What I built</h4>
+                <ul>{p.built.map((b) => <li key={b}>{b}</li>)}</ul>
+              </div>
+              <div className="d-sec"><h4>Stack</h4><Chips items={p.stack} /></div>
+              {p.links?.length ? (
+                <div className="d-sec">
+                  <h4>Links</h4>
+                  <div className="chips">
+                    {p.links.map((l) => (
+                      <a key={l.href} className="btn sm" href={l.href} target="_blank" rel="noopener">{l.label} ↗</a>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+              {p.placeholder && (
+                <p className="note">Screenshots are placeholders until real ones are added.</p>
+              )}
+            </div>
+          </div>
         </div>
       </aside>
     </>

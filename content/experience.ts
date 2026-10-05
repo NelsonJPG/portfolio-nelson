@@ -66,9 +66,4 @@ export const experience: Job[] = [
     ],
     stack: ["React", "Node.js", "WordPress"],
   },
-  {
-    when: "2011 – 2016", where: "Caracas", minor: true,
-    title: "Computer Engineering", company: "Colegio Universitario de Caracas",
-    summary: "5-year degree in Ingeniería en Informática.",
-  },
 ];

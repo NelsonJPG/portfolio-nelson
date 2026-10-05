@@ -8,7 +8,7 @@ export const profile = {
     "8 years shipping production web apps with React, Next.js, TypeScript and Node.js. Former front-end team lead, now building with AI-assisted, spec-driven workflows.",
   links: {
     cv: "/Nelson_Gonzalez_CV.pdf",
-    linkedin: "https://www.linkedin.com/in/nelson-jpgonzalez",
+    linkedin: "https://www.linkedin.com/in/nelson-jp-gonzalez/",
     email: "njeanpierre23@gmail.com",
     emailSubject: "Hi Nelson, let's talk",
   },
