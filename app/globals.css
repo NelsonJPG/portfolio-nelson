@@ -87,7 +87,8 @@ section{padding-block:clamp(72px,10vw,120px);border-top:1px solid var(--border)}
 .art svg{display:block;width:100%;height:auto;overflow:visible}
 
 
-.avatar{position:relative;width:100%;aspect-ratio:1024/1144;will-change:transform}
+/* left:8% puts the face (left of centre in the image) on the column centre */
+.avatar{position:relative;left:8%;width:100%;aspect-ratio:1024/1144;will-change:transform}
 .av-layer{position:absolute;inset:0;animation:avfloat 8s ease-in-out infinite;transition:translate .8s var(--ease)}
 @keyframes avfloat{50%{transform:translateY(-8px) scale(1.01)}}
 .av-layer img,.av-layer .fx{position:absolute;inset:0;width:100%;height:100%}
@@ -118,9 +119,6 @@ section{padding-block:clamp(72px,10vw,120px);border-top:1px solid var(--border)}
 .sparks{container-type:size}
 .avatar .halo{position:absolute;left:30%;top:8%;width:62%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--blue) 26%,transparent),transparent 65%);filter:blur(10px);animation:halo 5s ease-in-out infinite}
 @keyframes halo{50%{opacity:.55;transform:scale(1.06)}}
-.avatar .sweep{position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.07) 50%,transparent 60%);background-size:250% 100%;animation:sweep 7s ease-in-out infinite;
-  -webkit-mask-image:linear-gradient(to right,transparent 20%,#000 45%);mask-image:linear-gradient(to right,transparent 20%,#000 45%)}
-@keyframes sweep{0%,55%{background-position:120% 0}100%{background-position:-20% 0}}
 
 /* ---------- about ---------- */
 .about-grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:clamp(28px,5vw,72px);align-items:start}
@@ -171,6 +169,43 @@ details.sub[open] summary::before{content:"−"}
 .card.minor{padding:14px 18px;background:transparent}
 .card.minor h3{font-size:16px}
 .edu-grid{display:grid;gap:14px}
+.ico{flex:none;width:44px;height:44px;display:grid;place-items:center;border-radius:11px;color:var(--blue);background:color-mix(in srgb,var(--blue) 14%,transparent);border:1px solid color-mix(in srgb,var(--blue) 35%,transparent)}
+.card.edu{display:flex;align-items:flex-start;gap:16px}
+
+/* ---------- setup ---------- */
+.setup-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media (max-width:900px){.setup-grid{grid-template-columns:1fr}}
+.setup{display:flex;flex-direction:column;gap:16px;border:1px solid var(--border);border-radius:14px;background:var(--surface);padding:20px;transition:border-color .2s,transform .3s var(--ease)}
+.setup:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+.setup-k{font:500 11px var(--mono);text-transform:uppercase;letter-spacing:.1em;color:var(--subtle);margin:0 0 4px}
+.setup h3{margin:0 0 6px;font:600 17px/1.3 var(--sans)}
+.setup p:not(.setup-k){color:var(--muted);font-size:15px;margin:0}
+.setup-art{border:1px solid var(--border);border-radius:10px;background:var(--surface-2);background-image:radial-gradient(color-mix(in srgb,var(--border-strong) 70%,transparent) 1px,transparent 1px);background-size:14px 14px;overflow:hidden}
+.setup-art svg{display:block;width:100%;height:auto;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.sa-body{fill:var(--surface);stroke:var(--muted);stroke-width:1.6}
+.sa-screen{fill:var(--bg);stroke:var(--border-strong)}
+.sa-code rect{stroke:none}.sa-code .b{fill:var(--blue)}.sa-code .r{fill:var(--red)}.sa-code .m{fill:var(--subtle)}
+.sa-cursor{fill:var(--text);animation:sa-blink 1s steps(1) infinite}
+.sa-notch{fill:var(--border-strong)}
+.sa-chip rect{fill:color-mix(in srgb,var(--blue) 18%,var(--surface));stroke:var(--blue);stroke-width:1.4}
+.sa-chip text{fill:var(--text);font:700 10px var(--mono)}.sa-chip text.s{fill:var(--blue);font-size:7px}
+.sa-tag{fill:var(--blue);font:700 13px var(--mono)}.sa-tag.s{fill:var(--subtle);font-size:10px}.sa-tag.r{fill:var(--red);font-size:11px;letter-spacing:.08em}
+.sa-cable{stroke:var(--border-strong);stroke-width:4}
+.sa-pulse{stroke:var(--blue);stroke-width:2;stroke-dasharray:10 90;animation:sa-flow 1.8s linear infinite}
+.sa-led{fill:var(--border-strong)}.sa-led.on{fill:var(--blue);animation:sa-led 1.6s ease-in-out infinite}.sa-led.d1{animation-delay:.3s}.sa-led.d2{animation-delay:.6s}
+.sa-waves path{stroke:var(--blue);stroke-width:2.4;animation:sa-wave 2.4s ease-in-out infinite}
+.sa-waves .w2{animation-delay:.3s}.sa-waves .w3{animation-delay:.6s}
+.sa-stars circle{fill:var(--subtle)}
+.sa-panel{fill:color-mix(in srgb,var(--blue) 25%,var(--surface));stroke:var(--blue);stroke-width:1.2}
+.sa-sat{animation:sa-float 4s ease-in-out infinite}
+.sa-beam{stroke:var(--red);stroke-width:1.6;stroke-dasharray:4 6;animation:sa-flow 1.2s linear infinite reverse}
+.sa-dish{fill:color-mix(in srgb,var(--text) 92%,var(--bg));stroke:none}
+@keyframes sa-blink{50%{opacity:0}}
+@keyframes sa-flow{to{stroke-dashoffset:-100}}
+@keyframes sa-led{50%{opacity:.35}}
+@keyframes sa-wave{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes sa-float{50%{transform:translateY(3px)}}
+@media (prefers-reduced-motion:reduce){.setup-art *{animation:none!important}}
 
 /* ---------- projects ---------- */
 .car-ctrl{display:flex;gap:8px}
@@ -296,3 +331,52 @@ footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .thumbs button{position:relative}
 .thumbs video{width:100%;height:100%;object-fit:cover;display:block}
 .thumbs .is-video::after{content:"▶";position:absolute;inset:0;display:grid;place-items:center;font-size:14px;color:#fff;background:rgba(0,0,0,.35)}
+
+/* ---------- About dev scene (DevScene.tsx) ---------- */
+/* in About the scene stretches to the height of the text column */
+.about-scene{position:relative;width:100%;align-self:stretch;display:flex;flex-direction:column}
+@media (max-width:860px){.about-scene{align-self:auto}}
+/* .dev-scene is the window; .ds-stage is the 1144x2048 portrait picture, covering it 10% zoomed in and
+   anchored 25% from the top (45% on phones) so the head stays in view and part of the desk falls off the bottom. */
+.dev-scene{--ok:#4ade80;position:relative;width:100%;flex:1;min-height:clamp(420px,62vw,560px);overflow:hidden;container-type:size;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent),linear-gradient(to bottom,#000 80%,transparent);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent,#000 7%,#000 93%,transparent),linear-gradient(to bottom,#000 80%,transparent);mask-composite:intersect}
+.dev-scene .ds-stage{position:absolute;left:50%;top:25%;translate:-50% -25%;width:calc(max(100cqw,100cqh*1144/2048)*1.1);aspect-ratio:1144/2048;container-type:inline-size}
+@media (max-width:860px){.dev-scene .ds-stage{top:45%;translate:-50% -45%}}
+.dev-scene .ds-base,.dev-scene .ds-victory-img,.dev-scene .ds-layer{position:absolute;inset:0;width:100%;height:100%}
+.dev-scene .ds-base{display:block;object-fit:cover}
+.ds-px{position:absolute;pointer-events:none}
+/* the stage is 178.99cqw tall, so a top of y% is y*1.7899cqw in background-position */
+.ds-glow{left:10%;top:44%;width:80%;height:32%;background:radial-gradient(50% 50% at 50% 50%,rgba(96,165,250,.38),transparent 70%);mix-blend-mode:screen;opacity:.35;transition:opacity .6s,filter .6s}
+.ds-typing .ds-glow{animation:ds-flick 1.6s steps(6) infinite}
+.ds-compiled .ds-glow{opacity:.9;filter:hue-rotate(-75deg) saturate(1.3)}
+@keyframes ds-flick{0%,100%{opacity:.42}30%{opacity:.6}55%{opacity:.36}80%{opacity:.55}}
+.ds-arm{background:url(/hero/dev-serious.webp) no-repeat;background-size:100cqw auto;-webkit-mask-image:radial-gradient(closest-side,#000 70%,transparent);mask-image:radial-gradient(closest-side,#000 70%,transparent)}
+.ds-arm.ds-l{left:5%;top:66%;width:18%;height:12%;background-position:-5cqw -118.13cqw}
+.ds-arm.ds-r{left:78%;top:66%;width:18%;height:12%;background-position:-78cqw -118.13cqw}
+.ds-arm.ds-tap{translate:0 -.3cqw}
+.ds-spark{width:.8cqw;height:.8cqw;border-radius:50%;background:var(--blue-hi);box-shadow:0 0 1.6cqw var(--blue-hi);animation:ds-rise .7s var(--ease) forwards}
+@keyframes ds-rise{from{opacity:1;transform:translateY(0) scale(1)}to{opacity:0;transform:translateY(-5cqw) scale(.4)}}
+.ds-victory-img{z-index:1;opacity:0;transition:opacity .25s}
+.ds-victory .ds-victory-img{opacity:1}
+.ds-code,.ds-frame,.ds-badge,.ds-fx{z-index:2}
+/* the code panel sits on the hologram screen in the picture */
+.ds-code{left:12%;top:48.5%;width:76%;height:39cqw;border-radius:1.6cqw;padding:2.4cqw 2.8cqw;background:linear-gradient(180deg,rgba(14,22,40,.9),rgba(10,16,30,.86));border:1px solid rgba(96,165,250,.55);box-shadow:0 0 4cqw rgba(59,130,246,.4),inset 0 0 3cqw rgba(59,130,246,.12);font:400 2.45cqw/1.5 var(--mono);color:#cfe3ff;white-space:pre;overflow:hidden;display:flex;flex-direction:column;transition:border-color .4s,box-shadow .4s,opacity .6s}
+.ds-code .ds-bar{display:flex;gap:.8cqw;margin-bottom:1.2cqw;font-size:2cqw;color:#7f97bd}
+.ds-code .ds-bar b{font-weight:500;color:#cfe3ff}
+.ds-code pre{margin:0;font:inherit;flex:1}
+.ds-k{color:#c4a3ff}.ds-s{color:#9be6a8}.ds-f{color:#7cc4ff}
+.ds-cur{display:inline-block;width:1.2cqw;height:2.6cqw;vertical-align:-.4cqw;background:#cfe3ff;animation:ds-blink 1s steps(1) infinite}
+@keyframes ds-blink{50%{opacity:0}}
+.ds-term{border-top:1px solid rgba(96,165,250,.25);padding-top:1cqw;font-size:2.2cqw;color:#9fb3d6;min-height:7cqw}
+.ds-prog{height:.8cqw;border-radius:3cqw;background:rgba(96,165,250,.18);overflow:hidden;margin-top:.8cqw}
+.ds-prog i{display:block;height:100%;width:0;background:var(--blue-hi)}
+.ds-ok{color:var(--ok)}
+.ds-compiled .ds-code{border-color:rgba(74,222,128,.7);box-shadow:0 0 5cqw rgba(74,222,128,.45),inset 0 0 3cqw rgba(74,222,128,.14)}
+.ds-frame{inset:2.5%;border-radius:3cqw;border:2px solid transparent;opacity:0;transition:opacity .5s}
+.ds-compiled .ds-frame{opacity:1;border-color:rgba(74,222,128,.75);box-shadow:0 0 6cqw rgba(74,222,128,.45),inset 0 0 6cqw rgba(74,222,128,.18);animation:ds-pulse 1.2s var(--ease)}
+@keyframes ds-pulse{0%{transform:scale(.985)}40%{transform:scale(1.008)}100%{transform:scale(1)}}
+.ds-badge{left:0;right:0;margin-inline:auto;width:max-content;top:0;padding:1.3cqw 3.2cqw;border-radius:6cqw;font:500 3.2cqw var(--mono);color:#0b1a10;background:var(--ok);box-shadow:0 0 5cqw rgba(74,222,128,.6);opacity:0;transform:scale(.85);transition:transform .35s var(--ease);white-space:nowrap}
+.ds-compiled .ds-badge{opacity:1;transform:none}
+.ds-confetti{width:1cqw;height:1cqw;border-radius:.2cqw;animation:ds-pop 1.6s var(--ease) forwards}
+@keyframes ds-pop{0%{opacity:1;transform:translate(0,0) rotate(0)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) rotate(260deg)}}

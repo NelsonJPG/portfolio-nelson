@@ -7,6 +7,7 @@ export const tabs = [
   { href: "#education", label: "education.ts", ln: 72 },
   { href: "#projects", label: "projects/", ln: 96 },
   { href: "#skills", label: "skills.md", ln: 140 },
+  { href: "#setup", label: "setup.json", ln: 168 },
 ];
 
 export default function TabBar() {

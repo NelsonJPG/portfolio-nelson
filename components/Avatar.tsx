@@ -75,7 +75,6 @@ export default function Avatar() {
           ))}
         </div>
       </div>
-      <span className="sweep" aria-hidden="true" />
     </div>
   );
 }
